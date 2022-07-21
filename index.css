@@ -1,5 +1,98 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+}
+
 body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
     height: 100%;
     width: 100%;
-    background-color: grey;
+    min-height: 100vh;
+    max-width: 100%;
+    background-color: #313031;
 }
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: inherit;
+    min-width: 100%;
+    max-width: 100%;
+    border: 5px solid silver;
+    background-color: #a19fa1;
+    padding: 1px;
+}
+
+.display {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    min-width: 100%;
+    max-width: 100%;
+    padding: 10px;
+    min-height: 18vh;
+    font-size: 36px;
+    font-weight: bold;
+}
+
+.rowContainer {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: inherit;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    font-size: 18px;
+}
+
+.row div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 25%;
+    background-color: silver;
+    border: 1px solid #a19fa1;
+    border-radius: 4px;
+}
+
+@media (min-width: 513px) {
+    .container {
+        box-sizing: content-box;
+        border-radius: 10px;
+        max-width: 500px;
+        max-height: 750px;
+        min-width: 500px;
+        min-height: 80vh;
+    }
+
+    .rowContainer {
+        width: inherit;
+        height: inherit;
+    }
+}
+
+
+
+
+
+/* Color Theme Swatches in Hex */
+theme { color: #F2F2F2; }
+theme { color: #BFBFBF; }
+theme { color: #8C8C8C; }
+theme { color: #3D3D3D; }
+theme { color: #0D0D0D; }
+
