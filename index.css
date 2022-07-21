@@ -69,6 +69,16 @@ body {
     border-radius: 4px;
 }
 
+.square sup {
+    font-size: 12px;
+    margin-top: -4px;
+}
+
+.sign sup {
+    margin-top: -6px;
+    margin-right: -2px;
+}
+
 @media (min-width: 513px) {
     .container {
         box-sizing: content-box;
