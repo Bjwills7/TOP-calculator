@@ -33,7 +33,7 @@ body {
     padding: 1px;
 }
 
-.display {
+.screen {
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -72,11 +72,6 @@ body {
 .square sup {
     font-size: 12px;
     margin-top: -4px;
-}
-
-.sign sup {
-    margin-top: -6px;
-    margin-right: -2px;
 }
 
 @media (min-width: 513px) {
