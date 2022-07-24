@@ -5,54 +5,88 @@ btnDisplay.forEach(btn => btn.addEventListener('click', () => updateDisplay(btn)
 button[19].addEventListener('click', () => compute(screen.textContent));
 button[3].addEventListener('click', () => backSpace());
  
-    
-
-
+// to make sure only one operator is used at a time check screenArr.length
+    // to ensure its length is 2
 
 function compute(displayStr) {
     console.log(`Beep Boop Beep...take it back! ${displayStr}`)
 }
 
-function checkDec(txt, btn) {
-    let numArr = txt.split('+' || '-' || '×');
-    numArr.forEach(value => {
-        if (value.includes('.' && btn === '.')) {
-            return true;
-        }
-        return false;
-    });
-    return numArr;
-    // use array of objects to assign bool instead?
-}
+let arrOne = [];
+let op = [];
+let arrTwo = [];
+let screenArr = [];
+let screenText = screen.textContent;
 
 function updateDisplay(btn) {
-    let lastChar = String(screen.textContent).charAt(screen.textContent.length - 1);
-    let screenText = screen.textContent;
     let btnText = btn.textContent;
     if (screenText === '0' && !isNaN(btnText)) {
-        screenText = btnText;
-    } else if (screenText === '-0' && !isNaN(btnText)) {
-        screenText = screenText.slice(0, -1) + btnText;
-    } else if ((lastChar === '×' || lastChar === '-' || lastChar === '+') &&
-               (btnText === '×' || btnText === '-' || btnText === '+')) {      
-        screenText = screenText.slice(0, -1);
-        screenText += btnText;
+        screenArr.pop();
+        screenArr.push(btnText);
+    } else if (checkScreenOp() && checkOp(btnText)) {      
+        screenArr.pop();
+        screenArr.push(btnText);
     } else if (btnText === '±') {
-        screenText = screenText[0] !== '-' ? `-${screenText}` : screenText.slice(1);
-    } else if (false) {
-        
+        changeSign();
+    } else if (op.length > 0 && arrTwo.includes('.') && btnText === '.') {
+        // do nothing
+    } else if (op.length < 1 && arrOne.includes('.') && btnText === '.') {
+        // do nothing
     } else {
-        screenText += btnText;
-    }
+        screenArr.push(btnText);
+    };
+    splitArr(screenArr);
+    screenText = screenArr.join('');
     screen.textContent = screenText;
+}
+
+function changeSign() {
+    if (!op.length) {
+        arrOne[0] !== '-' ? arrOne.unshift('-') : arrOne.shift();
+        console.log(`arrOne: ${arrOne}`)
+    } else {
+        arrTwo[0] !== '-' ? arrTwo.unshift('-') : arrTwo.shift();
+        console.log(`arrTwo: ${arrTwo}`)
+    }
+    screenArr = arrOne.concat(op, arrTwo);
+}
+
+function splitArr(arr) { 
+    if (arr.some(char => checkOp(char))) {
+        arrOne = arr.slice(0, arr.indexOf(identifyOp(arr)));
+        op = arr.slice(arr.indexOf(identifyOp(arr)), arr.indexOf(identifyOp(arr)) + 1);
+        arrTwo = arr.slice(arr.indexOf(identifyOp(arr)) + 1);
+    } else {
+        arrOne = screenArr;
+        op = [];
+        arrTwo = [];
+    }
 }
 
 function backSpace() {
-    let screenText = screen.textContent;
-    screenText = screenText.slice(0, -1);
-    screenText = screenText === '' ? '0' : screenText;
-    screenText = screenText === '-' ? '-0' : screenText;
-    screen.textContent = screenText;
+    screenArr.pop();
+    if (screenArr.length < 1) {screenArr.push('0')}
+    else if (screenArr[0] === '-' && screenArr.length < 2) {
+        screenArr.shift();
+        screenArr.push('0')};
+    splitArr(screenArr);
+    screenText = screenArr.join('');
+    screen.textContent = screenArr.join('');
 }
 
-//lookup slice
+function checkScreenOp() { // Checks if lastChar in screen text is an operator
+    let lastChar = String(screen.textContent).charAt(screen.textContent.length - 1);
+    return lastChar === '×' || lastChar === '−' || lastChar === '+' ? true : false;
+}
+
+function checkOp(char) { // Checks if button text is an operator
+    return char === '×' || char === '−' || char === '+' ? true : false;
+}
+
+function identifyOp(arr) { // Checks what operator the array contains
+    for (let char of arr) {
+        if (char === '−') {return '−'}
+        else if (char === '+') {return '+'}
+        else if (char === '×') {return '×'}
+    }
+}
