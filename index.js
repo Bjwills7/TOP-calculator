@@ -4,6 +4,7 @@ const btnDisplay = Array.from(document.querySelectorAll('.display'));
 btnDisplay.forEach(btn => btn.addEventListener('click', () => updateDisplay(btn)));
 button[19].addEventListener('click', () => compute(screen.textContent));
 button[3].addEventListener('click', () => backSpace());
+button[1].addEventListener('click', () => clear());
  
 // to make sure only one operator is used at a time check screenArr.length
     // to ensure its length is 2
@@ -40,13 +41,19 @@ function updateDisplay(btn) {
     screen.textContent = screenText;
 }
 
+function clear() {
+    arrOne = [];
+    op = [];
+    arrTwo = [];
+    screenArr = [];
+    screen.textContent = '0';
+}
+
 function changeSign() {
     if (!op.length) {
         arrOne[0] !== '-' ? arrOne.unshift('-') : arrOne.shift();
-        console.log(`arrOne: ${arrOne}`)
     } else {
         arrTwo[0] !== '-' ? arrTwo.unshift('-') : arrTwo.shift();
-        console.log(`arrTwo: ${arrTwo}`)
     }
     screenArr = arrOne.concat(op, arrTwo);
 }
@@ -76,11 +83,17 @@ function backSpace() {
 
 function checkScreenOp() { // Checks if lastChar in screen text is an operator
     let lastChar = String(screen.textContent).charAt(screen.textContent.length - 1);
-    return lastChar === '×' || lastChar === '−' || lastChar === '+' ? true : false;
+    return lastChar === '×' ||
+           lastChar === '−' ||
+           lastChar === '+' ||
+           lastChar === '%' ? true : false;
 }
 
 function checkOp(char) { // Checks if button text is an operator
-    return char === '×' || char === '−' || char === '+' ? true : false;
+    return char === '×' ||
+           char === '−' ||
+           char === '+' ||
+           char === '%' ? true : false;
 }
 
 function identifyOp(arr) { // Checks what operator the array contains
@@ -88,5 +101,6 @@ function identifyOp(arr) { // Checks what operator the array contains
         if (char === '−') {return '−'}
         else if (char === '+') {return '+'}
         else if (char === '×') {return '×'}
+        else if (char === '%') {return '%'}
     }
 }
