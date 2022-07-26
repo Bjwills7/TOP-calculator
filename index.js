@@ -1,61 +1,69 @@
 const screen = document.querySelector('.screen');
 const button = Array.from(document.querySelectorAll('.button'));
 const btnDisplay = Array.from(document.querySelectorAll('.display'));
+
 btnDisplay.forEach(btn => btn.addEventListener('click', () => updateDisplay(btn)));
-button[19].addEventListener('click', () => compute(screen.textContent));
-button[3].addEventListener('click', () => backSpace());
-button[1].addEventListener('click', () => clear());
- 
-// to make sure only one operator is used at a time check screenArr.length
-    // to ensure its length is 2
+button[19].addEventListener('click', () => compute());
+button[1].addEventListener('click', () => backSpace());
+button[0].addEventListener('click', () => clear());
 
-function compute(displayStr) {
-    console.log(`Beep Boop Beep...take it back! ${displayStr}`)
-    if (op[0] === '×') {
-        screenText = +arrOne.join('') * +arrTwo.join('');
-    } else if (op[0] === '−') {
-        screenText = +arrOne.join('') - +arrTwo.join('');
-    } else if (op[0] === '+') {
-        screenText = +arrOne.join('') + +arrTwo.join('');
-    } else if (op[0] === '%') {
-        screenText = 100 * (+arrOne.join('') / +arrTwo.join(''));
-    }
-    screen.textContent = screenText;
-    prevAns = String(screenText).split('');
-}
-
-
-let prevAns = [];
 let arrOne = [];
 let op = [];
 let arrTwo = [];
 let screenArr = [];
 let screenText = screen.textContent;
 
+
+function compute(displayStr) {
+    if (op[0] === '×') {
+        screenText = +arrOne.join('') * +arrTwo.join('');
+    } else if (op[0] === '−') {
+        screenText = +arrOne.join('') - +arrTwo.join('');
+    } else if (op[0] === '+') {
+        screenText = +arrOne.join('') + +arrTwo.join('');
+    } else if (op[0] === '÷') {
+        screenText = +arrOne.join('') / +arrTwo.join('');
+    }
+    appendOnCompute();
+}
+
 function updateDisplay(btn) {
     let btnText = btn.textContent;
-    if (prevAns.length > 0) {
-        arrOne = prevAns;
-        screenArr = arrOne;
-    }
-    if (screenText === '0' && !isNaN(btnText)) {
-        screenArr.pop();
-        screenArr.push(btnText);
-    } else if (checkScreenOp() && checkOp(btnText)) {      
+    if (((screenText === '0' || screenText === '-0') && !isNaN(btnText)) ||
+         (checkScreenOp() && checkOp(btnText))) {
         screenArr.pop();
         screenArr.push(btnText);
     } else if (btnText === '±') {
         changeSign();
-    } else if (op.length > 0 && arrTwo.includes('.') && btnText === '.') {
-        // do nothing
-    } else if (op.length < 1 && arrOne.includes('.') && btnText === '.') {
-        // do nothing
+    } else if (btnText === 'x²') {
+        if (checkArrOp(screenArr)) return;
+        else square();
+    } else if ((op.length > 0 && arrTwo.includes('.') && btnText === '.') ||
+               (op.length < 1 && arrOne.includes('.') && btnText === '.') || 
+               (checkArrOp(screenArr) && checkOp(btnText))) {
+        return;
     } else {
         screenArr.push(btnText);
     };
+    checkLength(screenArr);
     splitArr(screenArr);
     screenText = screenArr.join('');
     screen.textContent = screenText;
+}
+
+function checkLength(arr) {
+    for (let i = arr.length -1; i >= 26; i--) {
+        arr.shift();
+    }
+}
+
+function appendOnCompute() {
+    screen.textContent = screenText;
+    arrOne = String(screenText).split('');
+    screenArr = arrOne;
+    screenText = String(arrOne);
+    op = [];
+    arrTwo = [];
 }
 
 function clear() {
@@ -68,6 +76,7 @@ function clear() {
 }
 
 function changeSign() {
+    if (!arrOne[0]) arrOne.push('0');
     if (!op.length) {
         arrOne[0] !== '-' ? arrOne.unshift('-') : arrOne.shift();
     } else {
@@ -76,7 +85,7 @@ function changeSign() {
     screenArr = arrOne.concat(op, arrTwo);
 }
 
-function splitArr(arr) { 
+function splitArr(arr) { // Splits array into 3 arrays at the operator
     if (arr.some(char => checkOp(char))) {
         arrOne = arr.slice(0, arr.indexOf(identifyOp(arr)));
         op = arr.slice(arr.indexOf(identifyOp(arr)), arr.indexOf(identifyOp(arr)) + 1);
@@ -104,21 +113,32 @@ function checkScreenOp() { // Checks if lastChar in screen text is an operator
     return lastChar === '×' ||
            lastChar === '−' ||
            lastChar === '+' ||
-           lastChar === '%' ? true : false;
+           lastChar === '÷' ? true : false;
 }
 
 function checkOp(char) { // Checks if button text is an operator
     return char === '×' ||
            char === '−' ||
            char === '+' ||
-           char === '%' ? true : false;
+           char === '÷' ? true : false;
 }
 
 function identifyOp(arr) { // Checks what operator the array contains
     for (let char of arr) {
-        if (char === '−') {return '−'}
-        else if (char === '+') {return '+'}
-        else if (char === '×') {return '×'}
-        else if (char === '%') {return '%'}
+        if (char === '−') return '−';
+        else if (char === '+') return '+';
+        else if (char === '×') return '×';
+        else if (char === '÷') return '÷';
     }
+}
+
+function checkArrOp(arr) { // Returns true if an array contains an operator
+    return arr.some(char => checkOp(char));
+}
+
+function square() {
+    let temp = screenArr.join('');
+    let answer = temp * temp;
+    clear();
+    screenArr.push(String(answer));
 }
