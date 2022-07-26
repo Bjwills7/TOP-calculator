@@ -11,8 +11,21 @@ button[1].addEventListener('click', () => clear());
 
 function compute(displayStr) {
     console.log(`Beep Boop Beep...take it back! ${displayStr}`)
+    if (op[0] === '×') {
+        screenText = +arrOne.join('') * +arrTwo.join('');
+    } else if (op[0] === '−') {
+        screenText = +arrOne.join('') - +arrTwo.join('');
+    } else if (op[0] === '+') {
+        screenText = +arrOne.join('') + +arrTwo.join('');
+    } else if (op[0] === '%') {
+        screenText = 100 * (+arrOne.join('') / +arrTwo.join(''));
+    }
+    screen.textContent = screenText;
+    prevAns = String(screenText).split('');
 }
 
+
+let prevAns = [];
 let arrOne = [];
 let op = [];
 let arrTwo = [];
@@ -21,6 +34,10 @@ let screenText = screen.textContent;
 
 function updateDisplay(btn) {
     let btnText = btn.textContent;
+    if (prevAns.length > 0) {
+        arrOne = prevAns;
+        screenArr = arrOne;
+    }
     if (screenText === '0' && !isNaN(btnText)) {
         screenArr.pop();
         screenArr.push(btnText);
@@ -42,6 +59,7 @@ function updateDisplay(btn) {
 }
 
 function clear() {
+    prevAns = [];
     arrOne = [];
     op = [];
     arrTwo = [];
