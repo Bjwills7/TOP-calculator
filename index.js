@@ -15,6 +15,7 @@ let screenText = screen.textContent;
 
 
 function compute(displayStr) {
+    if (checkNaN()) arrTwo.unshift('0');
     if (op[0] === '×') {
         screenText = +arrOne.join('') * +arrTwo.join('');
     } else if (op[0] === '−') {
@@ -25,6 +26,14 @@ function compute(displayStr) {
         screenText = +arrOne.join('') / +arrTwo.join('');
     }
     appendOnCompute();
+}
+
+function checkNaN() {
+    if (arrTwo.indexOf('.') === 0 && !arrTwo[1]) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 
