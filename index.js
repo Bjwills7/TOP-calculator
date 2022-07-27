@@ -27,6 +27,25 @@ function compute(displayStr) {
     appendOnCompute();
 }
 
+
+function appendOnCompute() {
+    screen.textContent = screenText;
+    arrOne = String(screenText).split('');
+    screenArr = arrOne;
+    screenText = String(arrOne.join(''));
+    op = [];
+    arrTwo = [];
+}
+
+
+function square() {
+    let temp = screenArr.join('');
+    let answer = temp * temp;
+    clear();
+    screenArr.push(String(answer));
+}
+
+
 function updateDisplay(btn) {
     let btnText = btn.textContent;
     if (((screenText === '0' || screenText === '-0') && !isNaN(btnText)) ||
@@ -43,6 +62,7 @@ function updateDisplay(btn) {
                (checkArrOp(screenArr) && checkOp(btnText))) {
         return;
     } else {
+
         screenArr.push(btnText);
     };
     checkLength(screenArr);
@@ -51,29 +71,14 @@ function updateDisplay(btn) {
     screen.textContent = screenText;
 }
 
-function checkLength(arr) {
+
+function checkLength(arr) { // Prevents numbers from going off screen
     for (let i = arr.length -1; i >= 26; i--) {
-        arr.shift();
+        if (checkArrOp(arr)) arr.pop();
+        else arr.shift();
     }
 }
 
-function appendOnCompute() {
-    screen.textContent = screenText;
-    arrOne = String(screenText).split('');
-    screenArr = arrOne;
-    screenText = String(arrOne);
-    op = [];
-    arrTwo = [];
-}
-
-function clear() {
-    prevAns = [];
-    arrOne = [];
-    op = [];
-    arrTwo = [];
-    screenArr = [];
-    screen.textContent = '0';
-}
 
 function changeSign() {
     if (!arrOne[0]) arrOne.push('0');
@@ -85,16 +90,28 @@ function changeSign() {
     screenArr = arrOne.concat(op, arrTwo);
 }
 
+
 function splitArr(arr) { // Splits array into 3 arrays at the operator
-    if (arr.some(char => checkOp(char))) {
-        arrOne = arr.slice(0, arr.indexOf(identifyOp(arr)));
-        op = arr.slice(arr.indexOf(identifyOp(arr)), arr.indexOf(identifyOp(arr)) + 1);
-        arrTwo = arr.slice(arr.indexOf(identifyOp(arr)) + 1);
+    if (checkArrOp(screenArr)) {
+        arrOne = arr.slice(0, arr.lastIndexOf(identifyOp(arr)));
+        op = arr.slice(arr.lastIndexOf(identifyOp(arr)), arr.lastIndexOf(identifyOp(arr)) + 1);
+        arrTwo = arr.slice(arr.lastIndexOf(identifyOp(arr)) + 1);
     } else {
         arrOne = screenArr;
         op = [];
         arrTwo = [];
     }
+}
+
+
+
+function clear() {
+    prevAns = [];
+    arrOne = [];
+    op = [];
+    arrTwo = [];
+    screenArr = [];
+    screen.textContent = '0';
 }
 
 function backSpace() {
@@ -103,10 +120,12 @@ function backSpace() {
     else if (screenArr[0] === '-' && screenArr.length < 2) {
         screenArr.shift();
         screenArr.push('0')};
-    splitArr(screenArr);
-    screenText = screenArr.join('');
-    screen.textContent = screenArr.join('');
-}
+        splitArr(screenArr);
+        screenText = screenArr.join('');
+        screen.textContent = screenArr.join('');
+    }
+
+    
 
 function checkScreenOp() { // Checks if lastChar in screen text is an operator
     let lastChar = String(screen.textContent).charAt(screen.textContent.length - 1);
@@ -116,7 +135,7 @@ function checkScreenOp() { // Checks if lastChar in screen text is an operator
            lastChar === '÷' ? true : false;
 }
 
-function checkOp(char) { // Checks if button text is an operator
+function checkOp(char) { // Checks if text is an operator
     return char === '×' ||
            char === '−' ||
            char === '+' ||
@@ -124,21 +143,20 @@ function checkOp(char) { // Checks if button text is an operator
 }
 
 function identifyOp(arr) { // Checks what operator the array contains
-    for (let char of arr) {
-        if (char === '−') return '−';
-        else if (char === '+') return '+';
-        else if (char === '×') return '×';
-        else if (char === '÷') return '÷';
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] === '−' && arr[i - 1] !== 'e') return '−';
+        else if (arr[i] === '+' && arr[i - 1] !== 'e') return '+';
+        else if (arr[i] === '×') return '×';
+        else if (arr[i] === '÷') return '÷';
     }
 }
 
 function checkArrOp(arr) { // Returns true if an array contains an operator
-    return arr.some(char => checkOp(char));
-}
-
-function square() {
-    let temp = screenArr.join('');
-    let answer = temp * temp;
-    clear();
-    screenArr.push(String(answer));
+    for (let i = 0; i < arr.length; i++) {
+        if (checkOp(arr[i]) && arr[i - 1] !== 'e') {
+            return true;
+        } else if (i === arr.length - 1) {
+            return false;
+        }
+    }
 }
