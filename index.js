@@ -38,8 +38,10 @@ function compute(displayStr) {
     isDivByZero() ? divByZeroAppend() : appendOnCompute();
 }
 
+
+// functions for compute()
 function isDivByZero() {
-    if (arrTwo.length === 1 && arrTwo[0] === '0') return true;
+    if (arrTwo.length === 1 && arrTwo[0] === '0' && op[0] === '÷') return true;
     else return false;
 }
 
@@ -48,14 +50,13 @@ function divByZeroAppend () {
     screen.textContent = "You can't divide by zero!"
 }
 
-function checkNaN() {
+function checkNaN() { // Checks if user tries to operate on a lone decimal
     if (arrTwo.indexOf('.') === 0 && !arrTwo[1]) {
         return true;
     } else {
         return false;
     }
 }
-
 
 function appendOnCompute() {
     arrOne = String(screenText).split('');
@@ -67,8 +68,8 @@ function appendOnCompute() {
 }
 
 
-
-
+// Main function Determines what happens onscreen when a button is pressed
+    // and updates stored data
 function updateDisplay(btn) {
     let btnText = btn.textContent;
     if (((screenText === '0' || screenText === '-0') && !isNaN(btnText)) ||
@@ -94,35 +95,8 @@ function updateDisplay(btn) {
     screen.textContent = screenText;
 }
 
-function checkPostOp(btnText) { // Checks for meaningless zeroes after operator
-    if (screenArr[screenArr.indexOf(identifyOp(screenArr)) + 1] === '0' && 
-        screenArr[screenArr.indexOf(identifyOp(screenArr)) + 2] !== '.' &&
-        btnText !== '.') {
-            return true;
-        } else {
-            return false;
-        }
-}
 
-function checkLength(arr) { // Prevents numbers from going off screen
-    for (let i = arr.length -1; i >= 26; i--) {
-        if (checkArrOp(arr)) arr.pop();
-        else arr.shift();
-    }
-}
-
-
-function changeSign() {
-    if (!arrOne[0]) arrOne.push('0');
-    if (!op.length) {
-        arrOne[0] !== '-' ? arrOne.unshift('-') : arrOne.shift();
-    } else {
-        arrTwo[0] !== '-' ? arrTwo.unshift('-') : arrTwo.shift();
-    }
-    screenArr = arrOne.concat(op, arrTwo);
-}
-
-
+// Functions that format data or return data for use in math functions
 function splitArr(arr) { // Splits array into 3 arrays at the operator
     if (checkArrOp(screenArr)) {
         arrOne = arr.slice(0, arr.lastIndexOf(identifyOp(arr)));
@@ -135,7 +109,33 @@ function splitArr(arr) { // Splits array into 3 arrays at the operator
     }
 }
 
+function identifyOp(arr) { // Checks what operator the array contains
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] === '−' && arr[i - 1] !== 'e') return '−';
+        else if (arr[i] === '+' && arr[i - 1] !== 'e') return '+';
+        else if (arr[i] === '×') return '×';
+        else if (arr[i] === '÷') return '÷';
+    }
+}
 
+function checkLength(arr) { // Prevents numbers from going off screen
+    for (let i = arr.length -1; i >= 26; i--) {
+        if (checkArrOp(arr)) arr.pop();
+        else arr.shift();
+    }
+}
+
+
+// functions for individual buttons
+function changeSign() {
+    if (!arrOne[0]) arrOne.push('0');
+    if (!op.length) {
+        arrOne[0] !== '-' ? arrOne.unshift('-') : arrOne.shift();
+    } else {
+        arrTwo[0] !== '-' ? arrTwo.unshift('-') : arrTwo.shift();
+    }
+    screenArr = arrOne.concat(op, arrTwo);
+}
 
 function clear() {
     arrOne = [];
@@ -156,39 +156,40 @@ function backSpace() {
         screenText = screenArr.join('');
         screen.textContent = screenArr.join('');
     }
-
     
 
-function checkScreenOp() { // Checks if lastChar in screen text is an operator
-    let lastChar = String(screen.textContent).charAt(screen.textContent.length - 1);
-    return lastChar === '×' ||
-           lastChar === '−' ||
-           lastChar === '+' ||
-           lastChar === '÷' ? true : false;
-}
-
-function checkOp(char) { // Checks if text is an operator
-    return char === '×' ||
-           char === '−' ||
-           char === '+' ||
-           char === '÷' ? true : false;
-}
-
-function identifyOp(arr) { // Checks what operator the array contains
-    for (let i = 0; i < arr.length; i++) {
-        if (arr[i] === '−' && arr[i - 1] !== 'e') return '−';
-        else if (arr[i] === '+' && arr[i - 1] !== 'e') return '+';
-        else if (arr[i] === '×') return '×';
-        else if (arr[i] === '÷') return '÷';
+    // Check functions that are used in conditionals 
+    function checkScreenOp() { // Checks if lastChar in screen text is an operator
+        let lastChar = String(screen.textContent).charAt(screen.textContent.length - 1);
+        return lastChar === '×' ||
+        lastChar === '−' ||
+        lastChar === '+' ||
+        lastChar === '÷' ? true : false;
     }
-}
+    
+    function checkOp(char) { // Checks if text is an operator
+        return char === '×' ||
+        char === '−' ||
+        char === '+' ||
+        char === '÷' ? true : false;
+    }
+    
+    function checkArrOp(arr) { // Returns true if an array contains an operator
+        for (let i = 0; i < arr.length; i++) {
+            if (checkOp(arr[i]) && arr[i - 1] !== 'e') {
+                return true;
+            } else if (i === arr.length - 1) {
+                return false;
+            }
+        }
+    }
 
-function checkArrOp(arr) { // Returns true if an array contains an operator
-    for (let i = 0; i < arr.length; i++) {
-        if (checkOp(arr[i]) && arr[i - 1] !== 'e') {
+    function checkPostOp(btnText) { // Checks for meaningless zeroes after operator
+        if (screenArr[screenArr.indexOf(identifyOp(screenArr)) + 1] === '0' && 
+        screenArr[screenArr.indexOf(identifyOp(screenArr)) + 2] !== '.' &&
+        btnText !== '.') {
             return true;
-        } else if (i === arr.length - 1) {
+        } else {
             return false;
         }
     }
-}
