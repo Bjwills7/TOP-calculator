@@ -13,24 +13,40 @@ let arrTwo = [];
 let screenArr = ['0'];
 let screenText = screen.textContent;
 
+// Math operation functions
+function square() {
+    let temp = screenArr.join('') * 100;
+    let answer = (temp * temp) / 10000;
+    clear();
+    screenArr = [];
+    screenArr.push(String(answer));
+}
 
 function compute(displayStr) {
     if (checkNaN()) arrTwo.unshift('0');
+    let a = +arrOne.join('') * 100;
+    let b = +arrTwo.join('') * 100;
     if (op[0] === '×') {
-        screenText = +arrOne.join('') * +arrTwo.join('');
+        screenText = (a * b) / 10000;
     } else if (op[0] === '−') {
-        screenText = +arrOne.join('') - +arrTwo.join('');
+        screenText = (a - b) / 100;
     } else if (op[0] === '+') {
-        screenText = +arrOne.join('') + +arrTwo.join('');
+        screenText = (a + b) / 100;
     } else if (op[0] === '÷') {
-        screenText = +arrOne.join('') / +arrTwo.join('');
+        screenText = (a / b) 
     }
-    appendOnCompute();
+    isDivByZero() ? divByZeroAppend() : appendOnCompute();
 }
 
-// function divByZero() {
-//     if (arrTwo.length === 1)
-// }
+function isDivByZero() {
+    if (arrTwo.length === 1 && arrTwo[0] === '0') return true;
+    else return false;
+}
+
+function divByZeroAppend () {
+    clear();
+    screen.textContent = "You can't divide by zero!"
+}
 
 function checkNaN() {
     if (arrTwo.indexOf('.') === 0 && !arrTwo[1]) {
@@ -51,13 +67,6 @@ function appendOnCompute() {
 }
 
 
-function square() {
-    let temp = screenArr.join('');
-    let answer = temp * temp;
-    clear();
-    screenArr = [];
-    screenArr.push(String(answer));
-}
 
 
 function updateDisplay(btn) {
@@ -129,7 +138,6 @@ function splitArr(arr) { // Splits array into 3 arrays at the operator
 
 
 function clear() {
-    prevAns = [];
     arrOne = [];
     op = [];
     arrTwo = [];
