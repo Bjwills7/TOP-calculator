@@ -10,7 +10,7 @@ button[0].addEventListener('click', () => clear());
 let arrOne = [];
 let op = [];
 let arrTwo = [];
-let screenArr = [];
+let screenArr = ['0'];
 let screenText = screen.textContent;
 
 
@@ -28,6 +28,10 @@ function compute(displayStr) {
     appendOnCompute();
 }
 
+// function divByZero() {
+//     if (arrTwo.length === 1)
+// }
+
 function checkNaN() {
     if (arrTwo.indexOf('.') === 0 && !arrTwo[1]) {
         return true;
@@ -38,10 +42,10 @@ function checkNaN() {
 
 
 function appendOnCompute() {
-    screen.textContent = screenText;
     arrOne = String(screenText).split('');
     screenArr = arrOne;
     screenText = String(arrOne.join(''));
+    screen.textContent = screenText;
     op = [];
     arrTwo = [];
 }
@@ -51,6 +55,7 @@ function square() {
     let temp = screenArr.join('');
     let answer = temp * temp;
     clear();
+    screenArr = [];
     screenArr.push(String(answer));
 }
 
@@ -58,7 +63,8 @@ function square() {
 function updateDisplay(btn) {
     let btnText = btn.textContent;
     if (((screenText === '0' || screenText === '-0') && !isNaN(btnText)) ||
-         (checkScreenOp() && checkOp(btnText))) {
+    (checkScreenOp() && checkOp(btnText)) ||
+    (checkPostOp(btnText) && !checkOp(btnText))) {
         screenArr.pop();
         screenArr.push(btnText);
     } else if (btnText === '±') {
@@ -67,11 +73,10 @@ function updateDisplay(btn) {
         if (checkArrOp(screenArr)) return;
         else square();
     } else if ((op.length > 0 && arrTwo.includes('.') && btnText === '.') ||
-               (op.length < 1 && arrOne.includes('.') && btnText === '.') || 
-               (checkArrOp(screenArr) && checkOp(btnText))) {
+    (op.length < 1 && arrOne.includes('.') && btnText === '.') || 
+    (checkArrOp(screenArr) && checkOp(btnText))) {
         return;
     } else {
-
         screenArr.push(btnText);
     };
     checkLength(screenArr);
@@ -80,6 +85,15 @@ function updateDisplay(btn) {
     screen.textContent = screenText;
 }
 
+function checkPostOp(btnText) { // Checks for meaningless zeroes after operator
+    if (screenArr[screenArr.indexOf(identifyOp(screenArr)) + 1] === '0' && 
+        screenArr[screenArr.indexOf(identifyOp(screenArr)) + 2] !== '.' &&
+        btnText !== '.') {
+            return true;
+        } else {
+            return false;
+        }
+}
 
 function checkLength(arr) { // Prevents numbers from going off screen
     for (let i = arr.length -1; i >= 26; i--) {
@@ -119,8 +133,9 @@ function clear() {
     arrOne = [];
     op = [];
     arrTwo = [];
-    screenArr = [];
+    screenArr = ['0'];
     screen.textContent = '0';
+    screenText = screen.textContent;
 }
 
 function backSpace() {
